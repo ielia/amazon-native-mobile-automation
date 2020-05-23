@@ -7,8 +7,6 @@ import io.appium.java_client.remote.MobileCapabilityType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -19,8 +17,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-public class AddToCartJUnitTest {
-    private static final Logger log = LoggerFactory.getLogger(AddToCartJUnitTest.class);
+public class HelpReturnAGiftJUnitTest {
+    private static final Logger log = LoggerFactory.getLogger(HelpReturnAGiftJUnitTest.class);
 
     private AppiumDriver<MobileElement> driver;
 
@@ -37,8 +35,6 @@ public class AddToCartJUnitTest {
         log.info("Starting driver on {}", this);
         this.driver = new AndroidDriver<>(hubURL, capabilities);
         this.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-
-        // log.info("setup: {}", this);
     }
 
     @AfterEach
@@ -46,63 +42,39 @@ public class AddToCartJUnitTest {
         this.driver.quit();
     }
 
-    @ParameterizedTest
-    // @Execution(ExecutionMode.CONCURRENT)
-    // @ValueSource(strings = { "computer keyboard", "computer mouse", "computer monitor" })
-    @ValueSource(strings = { "computer monitor" })
-    public void testAddToCart(String searchText) {
+    @Test
+    public void testAddToCart() {
         // When
         log.info("WHEN open app");
         StartupView startupView = new StartupView(this.driver);
         log.debug("startupView.waitToBeLoaded");
         startupView.waitToBeLoaded();
 
-        log.info("searchFor '{}'", searchText);
-        startupView.searchFor(searchText);
-
-        log.info("tap first suggestion");
-        SearchResultsView searchResultsView = startupView.tapSuggestion(0);
+        log.info("open menu");
+        startupView.openMenu();
 
         // Then
-        log.info("THEN search results show");
-        log.debug("searchResultsView.waitToBeLoaded");
-        searchResultsView.waitToBeLoaded();
-        // log.info("Number of results: {}", searchResultsView.getNumberOfResultsAsShown());
+        log.info("THEN menu opens");
+        startupView.waitForMenuToBeOpen();
 
         // When
-        log.info("WHEN tap first result");
-        ProductInfoView productInfoView = searchResultsView.tapOnFirstResultImage();
+        log.info("WHEN tap 'Customer Service' link");
+        CustomerServiceView customerServiceView = startupView.tapMenuItem("Customer Service");
 
         // Then
-        log.debug("productInfoView.waitToBeLoaded");
-        productInfoView.waitToBeLoaded();
+        log.info("THEN Customer Service view loads up");
+        customerServiceView.waitToBeLoaded();
 
         // When
-        log.debug("WHEN add to cart");
-        productInfoView.addToCart();
+        log.info("WHEN searchHelp 'Returns'");
+        HelpSearchResultsView helpSearchResultsView = customerServiceView.searchHelp("Returns");
 
         // Then
-        log.debug("THEN product was added successfully");
-        productInfoView.wasAddedToCartSuccessfully();
-    }
+        log.info("THEN go to 'Return a Gift'");
+        HelpReturnAGiftView helpReturnAGiftView = helpSearchResultsView.goToReturnAGift();
 
-    /*
-    @Test
-    @Execution(ExecutionMode.CONCURRENT)
-    public void testAddKeyboardToCart() {
-        this.testAddToCart("computer keyboard");
+        // And
+        log.info("scroll to bottom and end test");
+        helpReturnAGiftView.scrollToBottom();
     }
-
-    @Test
-    @Execution(ExecutionMode.CONCURRENT)
-    public void testAddMouseToCart() {
-        this.testAddToCart("computer mouse");
-    }
-
-    @Test
-    @Execution(ExecutionMode.CONCURRENT)
-    public void testAddMonitorToCart() {
-        this.testAddToCart("computer monitor");
-    }
-    */
 }

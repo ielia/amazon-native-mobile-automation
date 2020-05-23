@@ -17,8 +17,21 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// TODO: Move menu panel and all its elements to its own View.
 public class StartupView extends View<StartupView> {
     private static final Logger log = LoggerFactory.getLogger(StartupView.class);
+
+    @AndroidFindBy(id = "com.amazon.mShop.android.shopping:id/chrome_action_bar_burger_icon")
+    private MobileElement menuBurger;
+
+    @AndroidFindBy(id = "com.amazon.mShop.android.shopping:id/gno_menu_container")
+    private MobileElement menuPanel;
+
+    @AndroidFindBys({
+            @AndroidBy(id = "com.amazon.mShop.android.shopping:id/gno_menu_container"),
+            @AndroidBy(id = "com.amazon.mShop.android.shopping:id/anp_drawer_item")
+    })
+    private List<MobileElement> menuLinks;
 
     @AndroidFindBy(id = "com.amazon.mShop.android.shopping:id/rs_search_src_text")
     private MobileElement searchBox;
@@ -53,6 +66,11 @@ public class StartupView extends View<StartupView> {
         return this.suggestionsList.isDisplayed();
     }
 
+    public StartupView openMenu() {
+        this.menuBurger.click();
+        return this;
+    }
+
     public StartupView searchFor(String text) {
         this.searchBox.click();
         this.waitForSuggestionsListToBeVisible();
@@ -60,18 +78,32 @@ public class StartupView extends View<StartupView> {
         return this;
     }
 
+    public CustomerServiceView tapMenuItem(String linkText) {
+        //noinspection OptionalGetWithoutIsPresent
+        this.menuLinks.stream().filter(
+                e -> e.findElementByClassName("android.widget.TextView").getText().contains(linkText)
+        ).findFirst().get().click();
+        return new CustomerServiceView(this.driver);
+    }
+
     public StartupView tapSuggestion(String text) {
         this.searchSuggestions.get(this.getSuggestions().indexOf(text)).click();
         return this;
     }
 
-    public StartupView tapSuggestion(int index) {
+    public SearchResultsView tapSuggestion(int index) {
         this.searchSuggestions.get(index).click();
+        return new SearchResultsView(this.driver);
+    }
+
+    public StartupView waitForMenuToBeOpen() {
+        this.waitFor(Duration.ofSeconds(2), ExpectedConditions.visibilityOf(this.menuPanel));
         return this;
     }
 
-    public void waitForSuggestionsListToBeVisible() {
+    public StartupView waitForSuggestionsListToBeVisible() {
         this.waitFor(Duration.ofSeconds(10), ExpectedConditions.visibilityOf(this.suggestionsList));
+        return this;
     }
 
     public StartupView waitForSuggestionsToContain(String text) {
