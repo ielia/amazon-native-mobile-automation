@@ -2,32 +2,29 @@ package com.olenick.testing.nativeMobile.amazon;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.AppiumFluentWait;
-import io.appium.java_client.MobileElement;
-import io.appium.java_client.TouchAction;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
-import io.appium.java_client.touch.offset.PointOption;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 
 import java.time.Duration;
+import java.util.Collections;
 
 public abstract class View<V> {
-    protected final AppiumDriver<? extends MobileElement> driver;
+    protected final AppiumDriver driver;
 
-    protected View(AppiumDriver<? extends MobileElement> driver) {
+    protected View(AppiumDriver driver) {
         this.driver = driver;
         PageFactory.initElements(new AppiumFieldDecorator(this.driver), this);
     }
 
-    protected void scrollToElement(MobileElement element) {
+    protected void scrollToElement(WebElement element) {
         this.scrollToElement(element, false);
     }
 
-    protected void scrollToElement(MobileElement element, boolean bottom) {
+    protected void scrollToElement(WebElement element, boolean bottom) {
         // This method is ok for now, but going forward we should fix it for the cases where the element is way down.
         Point elementLocation = element.getLocation();
         int elementY = elementLocation.getY();
@@ -41,12 +38,16 @@ public abstract class View<V> {
             int anchor = windowWidth / 2;
             int startPoint = windowHeight - 100;
             int endPoint = elementY - windowHeight - 200;
-            //noinspection rawtypes
-            new TouchAction(this.driver)
-                    .longPress(PointOption.point(anchor, startPoint))
-                    .moveTo(PointOption.point(anchor, endPoint > 0 ? endPoint : 100)) // TODO: Fix.
-                    .release()
-                    .perform();
+            PointerInput finger = new PointerInput(org.openqa.selenium.interactions.PointerInput.Kind.TOUCH, "finger");
+            driver.perform(
+                    Collections.singletonList(
+                            new Sequence(finger, 1)
+                                    .addAction(finger.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), anchor, startPoint))
+                                    .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+                                    .addAction(finger.createPointerMove(Duration.ofMillis(700), PointerInput.Origin.viewport(), anchor, endPoint > 0 ? endPoint : 100)) // TODO: Fix.
+                                    .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()))
+                    )
+            );
         }
     }
 

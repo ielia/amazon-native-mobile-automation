@@ -2,7 +2,6 @@ package com.olenick.testing.nativeMobile.amazon;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileBy;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.functions.ExpectedCondition;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
@@ -11,7 +10,6 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,18 +21,18 @@ public class SearchResultsView extends View<SearchResultsView> {
     private static final String progressBarClassName = "android.widget.ProgressBar";
 
     @AndroidFindBy(id = "search")
-    private MobileElement searchPanel;
+    private WebElement searchPanel;
 
     @AndroidFindBy(xpath = "//*[@resource-id='search']//*[@resource-id='s-all-filters']/..//*[contains(@text, 'results')]")
-    private MobileElement numberOfResults;
+    private WebElement numberOfResults;
 
     @AndroidFindBy(className = progressBarClassName)
-    private MobileElement progressBar;
+    private WebElement progressBar;
 
     @FindBy(css = "[data-component-type='s-search-result'] .s-image")
     private List<WebElement> resultProductImages;
 
-    public SearchResultsView(AppiumDriver<? extends MobileElement> driver) {
+    public SearchResultsView(AppiumDriver driver) {
         super(driver);
     }
 
@@ -53,8 +51,10 @@ public class SearchResultsView extends View<SearchResultsView> {
         // this.driver.context(this.driver.getContextHandles().stream().filter(c -> c.contains("WEBVIEW")).findFirst().get());
         // this.resultProductImages.get(index).click();
         // this.driver.context(originalContextHandle);
-        this.driver.findElementByXPath(
-                "//*[@resource-id='search']/*[not(normalize-space(@text)='')][not(contains(@text, 'Filter by'))]"
+        this.driver.findElement(
+                By.xpath(
+                        "//*[@resource-id='search']/*[not(normalize-space(@text)='')][not(contains(@text, 'Filter by'))]"
+                )
         ).click();
         return new ProductInfoView(this.driver);
     }

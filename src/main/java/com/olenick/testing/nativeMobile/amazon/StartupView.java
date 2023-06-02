@@ -1,14 +1,14 @@
 package com.olenick.testing.nativeMobile.amazon;
 
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.functions.ExpectedCondition;
 import io.appium.java_client.pagefactory.AndroidBy;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AndroidFindBys;
 import org.checkerframework.checker.nullness.compatqual.NullableDecl;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.RemoteWebElement;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,33 +22,33 @@ public class StartupView extends View<StartupView> {
     private static final Logger log = LoggerFactory.getLogger(StartupView.class);
 
     @AndroidFindBy(id = "com.amazon.mShop.android.shopping:id/chrome_action_bar_burger_icon")
-    private MobileElement menuBurger;
+    private WebElement menuBurger;
 
     @AndroidFindBy(id = "com.amazon.mShop.android.shopping:id/gno_menu_container")
-    private MobileElement menuPanel;
+    private WebElement menuPanel;
 
     @AndroidFindBys({
             @AndroidBy(id = "com.amazon.mShop.android.shopping:id/gno_menu_container"),
             @AndroidBy(id = "com.amazon.mShop.android.shopping:id/anp_drawer_item")
     })
-    private List<MobileElement> menuLinks;
+    private List<WebElement> menuLinks;
 
     @AndroidFindBy(id = "com.amazon.mShop.android.shopping:id/rs_search_src_text")
-    private MobileElement searchBox;
+    private WebElement searchBox;
 
     @AndroidFindBy(id = "com.amazon.mShop.android.shopping:id/iss_search_suggestions_list_view")
-    private MobileElement suggestionsList;
+    private WebElement suggestionsList;
 
     @AndroidFindBy(id = "com.amazon.mShop.android.shopping:id/iss_search_dropdown_item_suggestions")
-    private List<MobileElement> searchSuggestions;
+    private List<WebElement> searchSuggestions;
 
     @AndroidFindBys({
             @AndroidBy(id = "com.amazon.mShop.android.shopping:id/iss_search_dropdown_item_suggestions"),
             @AndroidBy(id = "com.amazon.mShop.android.shopping:id/iss_search_dropdown_item_text")
     })
-    private List<MobileElement> searchSuggestionTexts;
+    private List<WebElement> searchSuggestionTexts;
 
-    public StartupView(AppiumDriver<? extends MobileElement> driver) {
+    public StartupView(AppiumDriver driver) {
         super(driver);
     }
 
@@ -59,7 +59,7 @@ public class StartupView extends View<StartupView> {
     }
 
     public List<String> getSuggestions() {
-        return this.searchSuggestionTexts.stream().map(RemoteWebElement::getText).collect(Collectors.toList());
+        return this.searchSuggestionTexts.stream().map(WebElement::getText).collect(Collectors.toList());
     }
 
     public boolean isSuggestionsListDisplayed() {
@@ -81,7 +81,7 @@ public class StartupView extends View<StartupView> {
     public CustomerServiceView tapMenuItem(String linkText) {
         //noinspection OptionalGetWithoutIsPresent
         this.menuLinks.stream().filter(
-                e -> e.findElementByClassName("android.widget.TextView").getText().contains(linkText)
+                e -> e.findElement(By.className("android.widget.TextView")).getText().contains(linkText)
         ).findFirst().get().click();
         return new CustomerServiceView(this.driver);
     }
@@ -96,11 +96,13 @@ public class StartupView extends View<StartupView> {
         return new SearchResultsView(this.driver);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public StartupView waitForMenuToBeOpen() {
         this.waitFor(Duration.ofSeconds(2), ExpectedConditions.visibilityOf(this.menuPanel));
         return this;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public StartupView waitForSuggestionsListToBeVisible() {
         this.waitFor(Duration.ofSeconds(10), ExpectedConditions.visibilityOf(this.suggestionsList));
         return this;

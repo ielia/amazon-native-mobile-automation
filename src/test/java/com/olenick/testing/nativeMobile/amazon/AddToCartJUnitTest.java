@@ -1,7 +1,6 @@
 package com.olenick.testing.nativeMobile.amazon;
 
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 public class AddToCartJUnitTest {
     private static final Logger log = LoggerFactory.getLogger(AddToCartJUnitTest.class);
 
-    private AppiumDriver<MobileElement> driver;
+    private AppiumDriver driver;
 
     @BeforeEach
     public void setup() throws MalformedURLException {
@@ -35,7 +34,7 @@ public class AddToCartJUnitTest {
         capabilities.setCapability("appActivity", "com.amazon.mShop.splashscreen.StartupActivity");
 
         log.info("Starting driver on {}", this);
-        this.driver = new AndroidDriver<>(hubURL, capabilities);
+        this.driver = new AndroidDriver(hubURL, capabilities);
         this.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
 
         // log.info("setup: {}", this);

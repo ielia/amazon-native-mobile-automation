@@ -1,14 +1,11 @@
 package com.olenick.testing.nativeMobile.amazon;
 
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 public class HelpReturnAGiftJUnitTest {
     private static final Logger log = LoggerFactory.getLogger(HelpReturnAGiftJUnitTest.class);
 
-    private AppiumDriver<MobileElement> driver;
+    private AppiumDriver driver;
 
     @BeforeEach
     public void setup() throws MalformedURLException {
@@ -33,7 +30,7 @@ public class HelpReturnAGiftJUnitTest {
         capabilities.setCapability("appActivity", "com.amazon.mShop.splashscreen.StartupActivity");
 
         log.info("Starting driver on {}", this);
-        this.driver = new AndroidDriver<>(hubURL, capabilities);
+        this.driver = new AndroidDriver(hubURL, capabilities);
         this.driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
     }
 

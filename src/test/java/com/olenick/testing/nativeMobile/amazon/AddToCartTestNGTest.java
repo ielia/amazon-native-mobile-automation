@@ -1,14 +1,16 @@
 package com.olenick.testing.nativeMobile.amazon;
 
 import io.appium.java_client.AppiumDriver;
-import io.appium.java_client.MobileElement;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.remote.MobileCapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
-import org.testng.annotations.*;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class AddToCartTestNGTest {
     private static final Logger log = LoggerFactory.getLogger(AddToCartTestNGTest.class);
 
-    private AppiumDriver<MobileElement> driver;
+    private AppiumDriver driver;
     private String searchText;
 
     @BeforeClass
@@ -51,7 +53,7 @@ public class AddToCartTestNGTest {
         this.driver.quit();
     }
 
-    private AppiumDriver<MobileElement> driver(int port, String udid, String deviceName) throws MalformedURLException {
+    private AppiumDriver driver(int port, String udid, String deviceName) throws MalformedURLException {
         final URL hubURL = new URL("http://127.0.0.1:" + port + "/wd/hub");
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setCapability(MobileCapabilityType.AUTOMATION_NAME, "Appium");
@@ -62,7 +64,7 @@ public class AddToCartTestNGTest {
         capabilities.setCapability("appActivity", "com.amazon.mShop.splashscreen.StartupActivity");
 
         log.info("Starting driver on {}", this);
-        AppiumDriver<MobileElement> driver = new AndroidDriver<>(hubURL, capabilities);
+        AppiumDriver driver = new AndroidDriver(hubURL, capabilities);
         driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
 
         return driver;
@@ -78,7 +80,7 @@ public class AddToCartTestNGTest {
     }
 
     @Test(dataProvider = "search", threadPoolSize = 2)
-    public void testAddToCart(AppiumDriver<MobileElement> driver, String searchText) {
+    public void testAddToCart(AppiumDriver driver, String searchText) {
         // Given
         log.info("{} - testAddToCart", this);
         this.driver = driver;
