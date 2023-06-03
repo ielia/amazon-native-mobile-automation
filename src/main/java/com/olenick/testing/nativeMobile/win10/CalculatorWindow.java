@@ -4,6 +4,7 @@ import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import io.appium.java_client.pagefactory.WindowsFindBy;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
 import java.util.HashMap;
@@ -12,59 +13,63 @@ import java.util.Map;
 public class CalculatorWindow {
     protected final AppiumDriver driver;
 
-    @WindowsFindBy(windowsAutomation="CalculatorResults")
+    @WindowsFindBy(accessibility="CalculatorResults")
     protected WebElement results;
-    @WindowsFindBy(windowsAutomation="divideButton")
+    @FindBy(name="Divide by")
     protected WebElement divide;
-    @WindowsFindBy(windowsAutomation="equalButton")
-    protected WebElement equal;
-    @WindowsFindBy(windowsAutomation="minusButton")
+    @FindBy(name="Equals")
+    protected WebElement equals;
+    @FindBy(name="Minus")
     protected WebElement minus;
-    @WindowsFindBy(windowsAutomation="multiplyButton")
+    @FindBy(name="Multiply by")
     protected WebElement multiply;
-    @WindowsFindBy(windowsAutomation="plusButton")
+    @FindBy(name="Plus")
     protected WebElement plus;
-    @WindowsFindBy(windowsAutomation="num0Button")
+    @FindBy(name="Zero")
     protected WebElement num0;
-    @WindowsFindBy(windowsAutomation="num1Button")
+    @FindBy(name="One")
     protected WebElement num1;
-    @WindowsFindBy(windowsAutomation="num2Button")
+    @FindBy(name="Two")
     protected WebElement num2;
-    @WindowsFindBy(windowsAutomation="num3Button")
+    @FindBy(name="Three")
     protected WebElement num3;
-    @WindowsFindBy(windowsAutomation="num4Button")
+    @FindBy(name="Four")
     protected WebElement num4;
-    @WindowsFindBy(windowsAutomation="num5Button")
+    @FindBy(name="Five")
     protected WebElement num5;
-    @WindowsFindBy(windowsAutomation="num6Button")
+    @FindBy(name="Six")
     protected WebElement num6;
-    @WindowsFindBy(windowsAutomation="num7Button")
+    @FindBy(name="Seven")
     protected WebElement num7;
-    @WindowsFindBy(windowsAutomation="num8Button")
+    @FindBy(name="Eight")
     protected WebElement num8;
-    @WindowsFindBy(windowsAutomation="num9Button")
+    @FindBy(name="Nine")
     protected WebElement num9;
 
-    protected final Map<String, WebElement> buttons = new HashMap<String, WebElement>() {{
-        put("/", divide);
-        put("-", minus);
-        put("*", multiply);
-        put("0", num0);
-        put("1", num1);
-        put("2", num2);
-        put("3", num3);
-        put("4", num4);
-        put("5", num5);
-        put("6", num6);
-        put("7", num7);
-        put("8", num8);
-        put("9", num9);
-        put("+", plus);
-    }};
+    protected final Map<String, WebElement> buttons = new HashMap<>();
 
     public CalculatorWindow(AppiumDriver driver) {
         this.driver = driver;
         PageFactory.initElements(new AppiumFieldDecorator(this.driver), this);
+        initializeButtons();
+    }
+
+    protected void initializeButtons() {
+        buttons.put("/", divide);
+        buttons.put("=", equals);
+        buttons.put("-", minus);
+        buttons.put("*", multiply);
+        buttons.put("0", num0);
+        buttons.put("1", num1);
+        buttons.put("2", num2);
+        buttons.put("3", num3);
+        buttons.put("4", num4);
+        buttons.put("5", num5);
+        buttons.put("6", num6);
+        buttons.put("7", num7);
+        buttons.put("8", num8);
+        buttons.put("9", num9);
+        buttons.put("+", plus);
     }
 
     public CalculatorWindow inputNumber(Integer number) {
@@ -80,6 +85,8 @@ public class CalculatorWindow {
     }
 
     public Double getResults() {
-        return Double.parseDouble(results.getText());
+        // TODO: See why it doesn't find any children.
+        String displayText = results.getText();
+        return Double.parseDouble(displayText.replace("Display is ", ""));
     }
 }

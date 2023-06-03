@@ -23,12 +23,12 @@ public class CalculateStuffTestNGTest {
     public static void setup() throws MalformedURLException, URISyntaxException {
         DesiredCapabilities capabilities = new DesiredCapabilities();
         // capabilities.setCapability("app", "C:\\Windows\\System32\\calc.exe");
-        capabilities.setCapability("app", "calc");
+        capabilities.setCapability("app", "Microsoft.WindowsCalculator_8wekyb3d8bbwe!App");
         capabilities.setCapability("platformName", "Windows");
         capabilities.setCapability("deviceName", "WindowsPC");
         capabilities.setCapability("automationName", "Windows");
-        capabilities.setCapability("ms:experimental-webdriver", true);
-        capabilities.setCapability("ms:waitForAppLaunch", 5);
+        // capabilities.setCapability("ms:experimental-webdriver", true);
+        capabilities.setCapability("ms:waitForAppLaunch", 3);
         driver = new AppiumDriver(new URI("http://127.0.0.1:9000").toURL(), capabilities);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
     }
@@ -40,7 +40,7 @@ public class CalculateStuffTestNGTest {
 
     @Test
     public void testAddition() {
-        Double results = new CalculatorWindow(driver).inputNumber(123).push("+").inputNumber(456).getResults();
+        Double results = new CalculatorWindow(driver).inputNumber(123).push("+").inputNumber(456).push("=").getResults();
         Assert.assertEquals(results.doubleValue(), 579.0);
     }
 }
